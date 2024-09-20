@@ -2,7 +2,7 @@ import { NgZone, Component, HostListener, OnDestroy, OnInit } from '@angular/cor
 import { registerLocaleData } from '@angular/common';
 import { Form } from '@openmrs/ngx-formentry';
 import { Observable, forkJoin, from, throwError, of, Subscription, Subject } from 'rxjs';
-import { catchError, concatAll, map, mergeMap, switchMap, take, takeUntil } from 'rxjs/operators';
+import { catchError, concatAll, filter, map, mergeMap, switchMap, take, takeUntil } from 'rxjs/operators';
 import { OpenmrsEsmApiService } from '../openmrs-api/openmrs-esm-api.service';
 import { FormSchemaService } from '../form-schema/form-schema.service';
 import { FormSubmissionService } from '../form-submission/form-submission.service';
@@ -112,6 +112,7 @@ export class FeWrapperComponent implements OnInit, OnDestroy {
             }, {});
           }
           this.changeState('ready');
+          this.setupWorkspaceDirtyStateListener();
         },
         (err) => {
           // TODO: Improve error handling.
@@ -249,7 +250,7 @@ export class FeWrapperComponent implements OnInit, OnDestroy {
             timeoutInMs: 5000,
           });
           this.changeState('submitted');
-          this.closeForm();
+          this.closeWorkspaceWithSavedChanges();
         },
         (error: Error) => {
           console.error('Form submission error:', error);
@@ -261,7 +262,7 @@ export class FeWrapperComponent implements OnInit, OnDestroy {
             title: this.form.schema.display ?? this.form.schema.name,
             timeoutInMs: 5000,
           });
-          this.closeForm(); // Close the form after showing the error
+          this.closeWorkspaceWithSavedChanges(); // Close the form after showing the error
         },
       );
   }
@@ -347,6 +348,11 @@ export class FeWrapperComponent implements OnInit, OnDestroy {
     closeWorkspace();
   }
 
+  public closeWorkspaceWithSavedChanges() {
+    const closeWorkspaceWithSavedChanges = this.singleSpaPropsService.getPropOrThrow('closeWorkspaceWithSavedChanges');
+    closeWorkspaceWithSavedChanges();
+  }
+
   public onPostResponse(encounter: Encounter | undefined) {
     const handlePostResponse = this.singleSpaPropsService.getProp('handlePostResponse');
     if (handlePostResponse && typeof handlePostResponse === 'function') handlePostResponse(encounter);
@@ -383,5 +389,27 @@ export class FeWrapperComponent implements OnInit, OnDestroy {
       obj[this.formUuid] = state;
       store.setState(obj);
     }
+  }
+
+  /**
+   * Sets up a listener to mark the workspace as dirty when form values change.
+   *
+   * This method observes the root form control for changes. When a change occurs,
+   * it sets the 'promptBeforeClosing' flag to true, indicating that the user
+   * should be prompted before closing the workspace due to unsaved changes.
+   */
+  private setupWorkspaceDirtyStateListener(): void {
+    const promptBeforeClosing = this.singleSpaPropsService.getPropOrThrow('promptBeforeClosing');
+
+    this.form.rootNode.control.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        map((control) => Boolean(control)),
+        filter((isDirty) => isDirty),
+        take(1),
+      )
+      .subscribe(() => {
+        promptBeforeClosing(() => true);
+      });
   }
 }
