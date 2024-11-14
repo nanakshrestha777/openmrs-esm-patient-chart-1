@@ -1,33 +1,28 @@
 import { launchPatientWorkspace } from '@openmrs/esm-patient-common-lib';
-import { type FormSchema } from '@openmrs/esm-form-engine-lib';
-import { formatDate, parseDate, formatDatetime, type Concept, age } from '@openmrs/esm-framework';
-import { type Observation, type Encounter } from '../../encounter-list/types';
+import { formatDate, parseDate, formatDatetime, type Concept, age, Visit } from '@openmrs/esm-framework';
+import { type Observation, type Encounter, Form } from '../types';
 import { esmPatientChartSchema } from '../../config-schema';
 import { type TFunction } from 'i18next';
 
 type LaunchAction = 'add' | 'view' | 'edit' | 'embedded-view';
 
 export function launchEncounterForm(
-  form: FormSchema,
+  form: Form,
+  visit: Visit,
   action: LaunchAction = 'add',
   onFormSave: () => void,
-  title?: string,
   encounterUuid?: string,
   intent: string = '*',
-  workspaceWindowSize?: 'minimized' | 'maximized',
   patientUuid?: string,
 ) {
   launchPatientWorkspace('patient-form-entry-workspace', {
-    workspaceTitle: form.name,
+    workspaceTitle: form?.name,
     mutateForm: onFormSave,
     formInfo: {
       encounterUuid,
-      formUuid: form.name,
+      formUuid: form?.uuid,
       patientUuid: patientUuid,
-      visitTypeUuid: '',
-      visitUuid: '',
-      visitStartDatetime: '',
-      visitStopDatetime: '',
+      visit: visit,
       additionalProps: {
         mode: action === 'add' ? 'enter' : action,
         formSessionIntent: intent,
@@ -121,12 +116,13 @@ export function getObsFromEncounter(
   if (isTrueFalseConcept) {
     if (typeof obs?.value === 'object') {
       if (
-        (obs?.value?.uuid != esmPatientChartSchema.trueConceptUuid._default && obs?.value?.name?.name !== 'Unknown') ||
-        obs?.value?.name?.name === 'FALSE'
+        (obs?.value?.uuid != esmPatientChartSchema.trueConceptUuid._default &&
+          obs?.value?.name?.name !== t('Unknown')) ||
+        obs?.value?.name?.name === t('FALSE')
       ) {
-        return 'No';
+        return t('No');
       } else if (obs?.value?.uuid == esmPatientChartSchema.trueConceptUuid._default) {
-        return 'Yes';
+        return t('Yes');
       } else {
         return obs?.value?.name?.name;
       }

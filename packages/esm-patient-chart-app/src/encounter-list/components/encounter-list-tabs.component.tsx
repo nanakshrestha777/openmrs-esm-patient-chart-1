@@ -1,8 +1,8 @@
 import React from 'react';
-import { useConfig } from '@openmrs/esm-framework';
+import { useConfig, usePatient, useVisit } from '@openmrs/esm-framework';
 import { useTranslation } from 'react-i18next';
 import { Tabs, Tab, TabList, TabPanels, TabPanel } from '@carbon/react';
-import { EncounterList } from '../../encounter-list/components/encounter-list.component';
+import { EncounterList } from './encounter-list.component';
 import { getMenuItemTabsConfiguration } from '../utils/encounter-list-config-builder';
 import styles from './encounter-list-tabs.scss';
 import { filter } from '../utils/helpers';
@@ -16,6 +16,8 @@ const EncounterListTabsComponent: React.FC<EncounterListTabsComponentProps> = ({
   const { tabDefinitions = [] } = config;
   const { t } = useTranslation();
   const tabsConfig = getMenuItemTabsConfiguration(tabDefinitions);
+  const patient = usePatient(patientUuid);
+  const { currentVisit } = useVisit(patientUuid);
 
   return (
     <div className={styles.tabContainer}>
@@ -37,6 +39,8 @@ const EncounterListTabsComponent: React.FC<EncounterListTabsComponentProps> = ({
                 launchOptions={tab.launchOptions}
                 headerTitle={tab.headerTitle}
                 description={tab.description}
+                currentVisit={currentVisit}
+                deathStatus={patient?.patient?.deceasedBoolean}
               />
             </TabPanel>
           ))}

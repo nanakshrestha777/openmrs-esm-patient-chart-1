@@ -11,8 +11,8 @@ import {
   type TabSchema,
   type ActionProps,
   type ConditionalActionProps,
-} from '../../encounter-list/types';
-import { renderTag } from '../../encounter-list/components/tag.component';
+} from '../types';
+import { renderTag } from '../components/tag.component';
 
 interface FormattedColumn {
   key: string;
