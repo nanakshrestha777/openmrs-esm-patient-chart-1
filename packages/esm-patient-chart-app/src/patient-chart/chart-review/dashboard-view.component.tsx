@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import classNames from 'classnames';
 import { useMatch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Extension, ExtensionSlot, useExtensionSlotMeta } from '@openmrs/esm-framework';
+import { launchPatientWorkspace, launchStartVisitPrompt } from '@openmrs/esm-patient-common-lib';
 import { dashboardPath } from '../../constants';
 import styles from './dashboard-view.scss';
-import { launchPatientWorkspace, launchStartVisitPrompt } from '@openmrs/esm-patient-common-lib';
-import classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 
 /**
  * The layout mode dictates the width occuppied by the chart dashboard widgets.
