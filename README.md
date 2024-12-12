@@ -40,18 +40,9 @@ yarn
 To start a dev server for a specific microfrontend, run:
 
 ```bash
-yarn start --sources 'packages/esm-patient-<insert-package-name>-app'
+yarn start 
 ```
 
-This command uses the [openmrs](https://www.npmjs.com/package/openmrs) tooling to fire up a dev server running `esm-patient-chart` as well as the specified microfrontend.
-
-There are two approaches for working on multiple microfrontends simultaneously.
-
-You could run `yarn start` with as many `sources` arguments as you require. For example, to run the biometrics and vitals microfrontends simultaneously, you'd use:
-
-```bash
-yarn start --sources 'packages/esm-patient-biometrics-app' --sources 'packages/esm-patient-vitals-app'
-```
 ## Design Patterns
 
 For documentation about our design patterns, please visit our [design system](https://zeroheight.com/23a080e38/p/880723--introduction) documentation website.
