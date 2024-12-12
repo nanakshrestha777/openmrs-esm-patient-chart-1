@@ -1,4 +1,4 @@
-:wave: **New to our project?** Be sure to review the [OpenMRS 3 Frontend Developer Documentation](https://o3-docs.openmrs.org) :teacher:	
+Be sure to review the [OpenMRS 3 Frontend Developer Documentation](https://o3-docs.openmrs.org) :teacher:	
 
 ![OpenMRS CI](https://github.com/openmrs/openmrs-esm-patient-chart/actions/workflows/ci.yml/badge.svg)
 
@@ -52,104 +52,6 @@ You could run `yarn start` with as many `sources` arguments as you require. For 
 ```bash
 yarn start --sources 'packages/esm-patient-biometrics-app' --sources 'packages/esm-patient-vitals-app'
 ```
-
-Alternatively, you could run `yarn serve` from within the individual packages and then use [import map overrides](http://o3-dev.docs.openmrs.org/#/getting_started/setup?id=import-map-overrides).
-
-## Running tests
-
-To run tests for all packages, run:
-
-```bash
-yarn turbo run test
-```
-
-To run tests in `watch` mode, run:
-
-```bash
-yarn turbo run test:watch
-```
-
-To run tests for a specific package, pass the package name to the `--filter` flag. For example, to run tests for `esm-patient-conditions-app`, run:
-
-```bash
-yarn turbo run test --filter=@openmrs/esm-patient-conditions-app
-```
-
-To run a specific test file, run:
-
-```bash
-yarn turbo run test -- visit-notes-form
-```
-
-The above command will only run tests in the file or files that match the provided string.
-
-You can also run the matching tests from above in watch mode by running:
-
-```bash
-yarn turbo run test:watch -- visit-notes-form
-```
-
-To generate a `coverage` report, run:
-
-```bash
-yarn turbo run coverage
-```
-
-By default, `turbo` will cache test runs. This means that re-running tests wihout changing any of the related files will return the cached logs from the last run. To bypass the cache, run tests with the `force` flag, as follows:
-
-```bash
-yarn turbo run test --force
-```
-
-To run end-to-end tests, run:
-
-```bash
-yarn test-e2e
-```
-
-Read the [e2e testing guide](https://o3-docs.openmrs.org/docs/frontend-modules/end-to-end-testing) to learn more about End-to-End tests in this project.
-
-### Updating Playwright
-
-The Playwright version in the [Bamboo e2e Dockerfile](e2e/support/bamboo/playwright.Dockerfile#L2) and the `package.json` file must match. If you update the Playwright version in one place, you must update it in the other.
-
-## Troubleshooting
-
-If you notice that your local version of the application is not working or that there's a mismatch between what you see locally versus what's in [dev3](https://dev3.openmrs.org/openmrs/spa), you likely have outdated versions of core libraries. To update core libraries, run the following commands:
-
-```bash
-# Upgrade core libraries
-yarn up openmrs@next @openmrs/esm-framework@next
-
-# Reset version specifiers to `next`. Don't commit actual version numbers.
-git checkout package.json
-
-# Run `yarn` to recreate the lockfile
-yarn
-```
-
-## Layout
-
-The patient chart consists of the following parts:
-
-- Navigation menu
-- Patient header
-- Chart review / Dashboards
-- Workspace
-- Side menu
-
-The **navigation menu** lives on the left side of the screen and provides links to dashboards in the patient chart.
-
-The **patient header** contains the [patient banner](packages/esm-patient-banner-app/README.md). Uninvasive notifications also appear in this area following actions such as form submissions.
-
-The **chart review** area is the main part of the screen. It displays whatever dashboard is active.
-
-A **dashboard** is a collection of widgets.
-
-The **workspace** is where data entry takes place. On mobile devices it covers the screen; on desktop it appears in a sidebar.
-
-The **side menu** provides access to features that do not have their own pages, such as the notifications menu.
-
 ## Design Patterns
 
 For documentation about our design patterns, please visit our [design system](https://zeroheight.com/23a080e38/p/880723--introduction) documentation website.
